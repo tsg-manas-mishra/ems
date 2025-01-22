@@ -14,6 +14,6 @@ async def authUser(user:User):
         #If user found, generate the token
         token_data = {"email":db_user["email"],"password":db_user["password"], "role":db_user["role"]}
         access_token = create_access_token(token_data)
-        return {"access_token":access_token,"token_type":"bearer"}
+        return {"access_token":access_token,"token_type":"Bearer"}
     except PyMongoError as e:
         raise HTTPException(status_code=500, detail=f"Database error:{e}")
