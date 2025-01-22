@@ -31,7 +31,6 @@ def create_access_token(data: dict) -> str:
         
         # Encode the token
         token = instance.encode(payload=to_encode, key=key, alg=ALGORITHM)
-        print(token)
         return token
     except Exception as e:
         raise HTTPException(status_code=500,detail=f"database error {e}")
