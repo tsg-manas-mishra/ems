@@ -5,6 +5,9 @@ class User(BaseModel):
     name: str
     role: str
     contact: int
+    designation: str
+    department: str
+    address: str
 
 # class Token(BaseModel):
 #     access_token: str
