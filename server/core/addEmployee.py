@@ -6,6 +6,7 @@ from db import mycollection
 def add_Employee(user:User):
     entry = user.dict()
     hashing = CryptContext(schemes=["bcrypt"])
+    hashing.default_scheme()
     hashed_password = hashing.hash(entry["password"])
     entry["password"] =hashed_password
     try:
