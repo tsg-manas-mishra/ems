@@ -3,7 +3,6 @@ from jwt import JWT, jwk_from_dict
 from dotenv import load_dotenv
 import os
 from fastapi import HTTPException, Request
-
 load_dotenv()
 instance = JWT()
 secret_key = os.getenv("JWT_SECRET")
