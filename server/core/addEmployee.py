@@ -5,10 +5,10 @@ from db import mycollection
 
 def add_Employee(user:User):
     entry = user.dict()
-    hashing = CryptContext(schemes=["bcrypt"])
+    hashing = CryptContext(schemes=["bcrypt"],deprecated="auto")
     hashing.default_scheme()
     hashed_password = hashing.hash(entry["password"])
-    entry["password"] =hashed_password
+    entry["password"] = hashed_password
     try:
         mycollection.insert_one(entry)
         return {"message": "Employee added successfully"}
