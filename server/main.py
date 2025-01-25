@@ -8,11 +8,11 @@ from api import admin_dashboard, employee_dashboard
 app = FastAPI()
 
 @app.post("/login/")
-async def login(user: User):
+def login(user: User):
     """
     Authenticate user and return a token.
     """
-    return await authUser(user)
+    return authUser(user)
 
 # Admin dashboard
 @app.get("/admin-dashboard/", dependencies=[Depends(decode_token)])
