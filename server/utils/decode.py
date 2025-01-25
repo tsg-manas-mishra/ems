@@ -3,7 +3,9 @@ from jwt import JWT, jwk_from_dict
 from dotenv import load_dotenv
 import os
 from fastapi import HTTPException, Request
+
 load_dotenv()
+
 instance = JWT()
 secret_key = os.getenv("JWT_SECRET")
 algo = os.getenv("JWT_ALGORITHM")
@@ -20,8 +22,6 @@ def decode_token(request: Request):
 
             # Decode the token
             payload = instance.decode(token, key, do_time_check=True, algorithms=[algo])
-
-            # Validate the expiration time (optional, as `do_time_check` already checks it)
             exp = payload.get("exp")
             if exp and datetime.fromtimestamp(exp) < datetime.now():
                 raise HTTPException(status_code=401, detail="Token has expired")
