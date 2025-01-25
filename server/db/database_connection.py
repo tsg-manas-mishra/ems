@@ -11,4 +11,5 @@ client = MongoClient(MONGO_URI)
 
 # Select database and collection
 mydatabase = client["ems"]
-mycollection = mydatabase["user"]
+user_collection = mydatabase["user"]
+update_collection = mydatabase["update"]

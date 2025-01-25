@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from models import User
 from pymongo.errors import PyMongoError
 from utils.auth import create_access_token
-from db import mycollection
+from db import user_collection
 from passlib.context import CryptContext
 
 context = CryptContext(schemes=["bcrypt"],deprecated = "auto")
@@ -12,7 +12,7 @@ async def authUser(user:User):
     try:
         #Retrieve details of the user from the database
 
-        db_user = mycollection.find_one({"email":user.email,"role":user.role})
+        db_user = user_collection.find_one({"email":user.email,"role":user.role})
         if not db_user:
             raise HTTPException(status_code = 401, detail="Invalid email or password")
         if not context.verify(user.password,db_user["password"]):
