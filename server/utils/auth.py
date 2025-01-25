@@ -12,11 +12,13 @@ instance = JWT()
 
 # Loading the environment variables
 load_dotenv()
-JWT_SECRET_KEY = os.getenv("JWT_SECRET", "default_secret_key")
-ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
+JWT_SECRET_KEY = os.getenv("JWT_SECRET")
+ALGORITHM = os.getenv("JWT_ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("JWT_EXPIRATION_MINUTES"))
 
-def create_access_token(data: dict) -> str:
+def create_access_token(data: dict):
+    if data is None:
+        raise HTTPException(status_code=401,detail="Data to encode is missing")
     try:
         # Create a copy of the data to avoid modifying the original dictionary
         to_encode = data.copy()
