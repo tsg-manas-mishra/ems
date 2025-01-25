@@ -5,6 +5,7 @@ from db import user_collection,update_collection
 from typing import Optional
 from pydantic import EmailStr
 from core import add_Employee, delEmployee, searchEmp
+from api import admin_dashboard, employee_dashboard
 app = FastAPI()
 
 @app.post("/login/")
@@ -16,11 +17,11 @@ async def login(user: User):
 
 # Admin dashboard
 @app.get("/admin-dashboard/", dependencies=[Depends(decode_token)])
-def admin_dashboard(payload: dict = Depends(decode_token)):
-    role = payload.get("role")
-    if role != "Admin":
-        raise HTTPException(status_code=403,detail="Access Forbidden Admin only")
-    return {"message": "Welcome to the Admin Dashboard"}
+def admindashboard(payload:dict=Depends(decode_token)):
+    try:
+        return admin_dashboard(payload)
+    except:
+        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 #Add Employee
 @app.post("/admin-dashboard/add", dependencies=[Depends(decode_token)])
@@ -34,11 +35,11 @@ def addingEmployee(user: User, payload: dict = Depends(decode_token)):
 
 # Employee dashboard
 @app.get("/employee-dashboard/", dependencies=[Depends(decode_token)])
-def employee_dashboard(payload: dict = Depends(decode_token)):
-    role = payload.get("role")
-    if role != "Employee":
-        raise HTTPException(status_code=403,detail="Access Forbidden")
-    return {"message": "Welcome to the Employee Dashboard"}
+def employeedashboard(payload:dict=Depends(decode_token)):
+    try:
+        return employee_dashboard(payload)
+    except:
+        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 #Delete Employee
 @app.delete("/delete-employee/{email}",dependencies=[Depends(decode_token)])
