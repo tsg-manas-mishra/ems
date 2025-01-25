@@ -1,1 +1,1 @@
-from .database_connection import mycollection 
+from .database_connection import user_collection, update_collection
