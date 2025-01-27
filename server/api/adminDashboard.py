@@ -13,6 +13,6 @@ def admin_dashboard(payload: dict = Depends(decode_token)):
     if role is None or role!="Admin":
         raise HTTPException(status_code=403,detail="Forbidden Access")
     try:
-        return {"message":"Welcome to employee Dashboard"}
+        return {"message":"Welcome to Admin Dashboard"}
     except:
         raise HTTPException(status_code=500,detail="Internal Server Error")
