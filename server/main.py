@@ -50,11 +50,11 @@ def deletingemp(email:EmailStr,payload: dict=Depends(decode_token)):
 
 #Search Employee
 @app.get("/search-employee",dependencies=[Depends(decode_token)])
-def searchingemp(name: Optional[str] = Query(None), designation: Optional[str] = Query(None),department: Optional[str]=Query(None)):
+def searchingemp(email: Optional[EmailStr] = Query(None), designation: Optional[str] = Query(None),department: Optional[str]=Query(None)):
     try:
-        return searchEmp(name,designation,department)
+        return searchEmp(email,designation,department)
     except:
-        raise HTTPException(status_code=500, details="Internal server error")
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 #Edit Employee
 @app.put("/edit-employee/{email}")
