@@ -1,7 +1,7 @@
 from fastapi import Depends, HTTPException
 from models import User
 from passlib.context import CryptContext
-from db import user_collection
+from db import user_collection, update_collection
 from utils import decode_token
 import datetime
 
@@ -18,7 +18,7 @@ def add_Employee(user:User,payload: dict= Depends(decode_token)):
     count = user_collection.count_documents({"email":to_add_email})
     if count>0:
         raise HTTPException(status_code=403,detail="Can not have more than 1 employee with same Email ID")
-    entry = user.dict()
+    entry = user.model_dump()
     hashing = CryptContext(schemes=["bcrypt"],deprecated="auto")
     hashing.default_scheme()
     hashed_password = hashing.hash(entry["password"])
@@ -26,6 +26,9 @@ def add_Employee(user:User,payload: dict= Depends(decode_token)):
     entry["Joining_Date"]= datetime.datetime.now()
     try:
         user_collection.insert_one(entry)
+        entry["updated"] = datetime.datetime.now()
+        del entry["Joining_Date"]
+        update_collection.insert_one(entry)
         return {"message": "Employee added successfully"}
 
     except Exception as e:
