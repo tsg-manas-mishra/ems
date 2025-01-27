@@ -3,6 +3,7 @@ from models import User
 from passlib.context import CryptContext
 from db import user_collection
 from utils import decode_token
+import datetime
 
 def add_Employee(user:User,payload: dict= Depends(decode_token)):
     role = payload["role"]
@@ -22,6 +23,7 @@ def add_Employee(user:User,payload: dict= Depends(decode_token)):
     hashing.default_scheme()
     hashed_password = hashing.hash(entry["password"])
     entry["password"] = hashed_password
+    entry["Joining_Date"]= datetime.datetime.now()
     try:
         user_collection.insert_one(entry)
         return {"message": "Employee added successfully"}
