@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends, HTTPException, Query
+from fastapi.middleware.cors import CORSMiddleware
 from utils import authUser, decode_token
 from models import User, UpdateEmployee
 from typing import Optional
@@ -6,6 +7,15 @@ from pydantic import EmailStr
 from core import add_Employee, delEmployee, searchEmp, update_employee
 from api import admin_dashboard, employee_dashboard
 app = FastAPI()
+
+origins = ["http://localhost:3000"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # Allowed origins
+    allow_credentials=True,  # Allow cookies and credentials
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all HTTP headers
+)
 
 @app.post("/login/")
 def login(user: User):
