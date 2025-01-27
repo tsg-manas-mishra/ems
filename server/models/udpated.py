@@ -1,7 +1,8 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from datetime import date
 class UpdateEmployee(BaseModel):
-    role: str = None
+    role: str = None,
+    email: EmailStr = None
     designation: str = None
     department: str = None
     contact:int = None
