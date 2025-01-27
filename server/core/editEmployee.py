@@ -2,6 +2,7 @@ from fastapi import HTTPException
 from db import user_collection, update_collection
 from pydantic import EmailStr
 from models import UpdateEmployee
+from datetime import datetime
 
 def update_employee(email: EmailStr, update_data: UpdateEmployee, token_payload: dict):
     role = token_payload.get("role")
@@ -31,7 +32,6 @@ def update_employee(email: EmailStr, update_data: UpdateEmployee, token_payload:
         for field, value in update_data.dict(exclude_unset=True).items()
         if field in allowed_fields
     }
-
     if not update_data:
         raise HTTPException(status_code=400, detail="No valid fields to update")
 
@@ -43,7 +43,7 @@ def update_employee(email: EmailStr, update_data: UpdateEmployee, token_payload:
             raise HTTPException(status_code=400, detail="Invalid contact value: must be a valid integer")
 
     # Update MongoDB document
-    update_result = user_collection.update_one({"email": email}, {"$set": update_data})
+    update_result = user_collection.update_one({"email": email}, {"$set": {**update_data,"updated":datetime.now()}})
     if update_result.matched_count == 0:
         raise HTTPException(status_code=400, detail="Failed to update employee")
 
@@ -51,10 +51,10 @@ def update_employee(email: EmailStr, update_data: UpdateEmployee, token_payload:
     updated_employee = user_collection.find_one({"email": email})
     if updated_employee:
         updated_employee["_id"] = str(updated_employee["_id"])
-        updated_employee.pop("password", None)
-
+        updated_employee.pop("password")
+        updated_employee.pop("Joining_Date")
     # Add to update collection for audit
-    update_collection.insert_one({k: v for k, v in updated_employee.items() if k != "_id"})
+    update_collection.insert_one({key: value for key, value in updated_employee.items() if key != "_id"})
 
     return {
         "message": "Employee updated successfully",
