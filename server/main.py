@@ -5,16 +5,15 @@ from models import User, UpdateEmployee
 from typing import Optional
 from pydantic import EmailStr
 from core import add_Employee, delEmployee, searchEmp, update_employee
-from api import admin_dashboard, employee_dashboard
 app = FastAPI()
 
 origins = ["http://localhost:3000"]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,  # Allowed origins
-    allow_credentials=True,  # Allow cookies and credentials
-    allow_methods=["*"],  # Allow all HTTP methods
-    allow_headers=["*"],  # Allow all HTTP headers
+    allow_origins=origins, 
+    allow_credentials=True, 
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 @app.post("/login/")
@@ -25,12 +24,16 @@ def login(user: User):
     return authUser(user)
 
 # Admin dashboard
-@app.get("/admin-dashboard/", dependencies=[Depends(decode_token)])
-def admindashboard(payload:dict=Depends(decode_token)):
-    try:
-        return admin_dashboard(payload)
-    except:
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+@app.get("/dashboard/")
+def dashboard(payload: dict = Depends(decode_token)):
+    role = payload.get("role")
+    if role == "Admin":
+        return {"message": "Welcome, Admin!"}
+    elif role == "Employee":
+        return {"message": "Welcome, Employee!"}
+    else:
+        raise HTTPException(status_code=403, detail="Access denied")
+
 
 #Add Employee
 @app.post("/admin-dashboard/add", dependencies=[Depends(decode_token)])
@@ -41,14 +44,6 @@ def addingEmployee(user: User, payload: dict = Depends(decode_token)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Server error {e}")
 
-
-# Employee dashboard
-@app.get("/employee-dashboard/", dependencies=[Depends(decode_token)])
-def employeedashboard(payload:dict=Depends(decode_token)):
-    try:
-        return employee_dashboard(payload)
-    except:
-        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 #Delete Employee
 @app.delete("/delete-employee/{email}",dependencies=[Depends(decode_token)])
