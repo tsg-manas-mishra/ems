@@ -11,73 +11,62 @@ const LoginForm = () => {
     e.preventDefault();
 
     try {
-      // Make a POST request to the login endpoint
       const response = await fetch("http://127.0.0.1:8000/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }), // Send credentials in the body
+        body: JSON.stringify({ email, password }),
       });
 
       if (response.ok) {
-        // Parse the response and save the token
         const data = await response.json();
-        localStorage.setItem("token", data.access_token); // Save the token in localStorage
-        navigate("/dashboard"); // Redirect to dashboard after successful login
+        localStorage.setItem("token", data.access_token); // Save token
+        navigate("/dashboard");
       } else {
-        // Handle invalid login response
         const errorData = await response.json();
         setError(errorData.detail || "Login failed. Please try again.");
       }
     } catch (err) {
-      // Handle network or other errors
       console.error("Error during login:", err);
       setError("An error occurred. Please try again.");
     }
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "0 auto", padding: "20px" }}>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "15px" }}>
-          <label>Email:</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
-          />
-        </div>
-        <div style={{ marginBottom: "15px" }}>
-          <label>Password:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
-          />
-        </div>
-        <button
-          type="submit"
-          style={{
-            width: "100%",
-            padding: "10px",
-            backgroundColor: "#007bff",
-            color: "white",
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
-          Login
-        </button>
-      </form>
-      {error && (
-        <p style={{ color: "red", marginTop: "15px" }}>{error}</p>
-      )}
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold mb-4 text-gray-800">Login</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">Email:</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="mt-1 p-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700">Password:</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="mt-1 p-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full py-2 px-4 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600"
+          >
+            Login
+          </button>
+        </form>
+        {error && <p className="mt-4 text-sm text-red-500">{error}</p>}
+      </div>
     </div>
   );
 };
