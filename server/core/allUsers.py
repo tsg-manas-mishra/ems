@@ -3,7 +3,6 @@ from db import user_collection
 
 def getusers(payload: dict):
     role = payload.get("role")
-    print("Decoded Role:", role)  # Debug: Check the decoded role
     try:
         if not role:
             raise HTTPException(status_code=401, detail="Role missing in token")
