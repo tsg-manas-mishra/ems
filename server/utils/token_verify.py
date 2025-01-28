@@ -22,12 +22,12 @@ def authUser(user: User):
             raise HTTPException(status_code=401, detail="Invalid credentials")
 
         # Create token payload with essential details
-        token_data = {"email": db_user["email"],"role": db_user.get("role")}
+        token_data = {"email": db_user.get("email"),"role": db_user.get("role")}
 
         # Generate access token
         access_token = create_access_token(token_data)
 
-        return {"access_token": access_token, "token_type": "Bearer"}
+        return {"access_token": access_token, "token_type": "Bearer", "role":db_user.get("role")}
 
     except PyMongoError as e:
         raise HTTPException(status_code=500, detail=f"Database error: {e}")
