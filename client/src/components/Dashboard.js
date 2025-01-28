@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import DashboardPage from "../pages/DashboardPage";
 
 const Dashboard = () => {
   const [message, setMessage] = useState("");
@@ -45,9 +46,7 @@ const Dashboard = () => {
 
   return (
     <div>
-      <h1>Dashboard</h1>
-       <h2>{message}</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      <DashboardPage message={message} errors={error}/>
     </div>
   );
 };
