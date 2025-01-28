@@ -4,7 +4,7 @@ from utils import authUser, decode_token
 from models import User, UpdateEmployee
 from typing import Optional
 from pydantic import EmailStr
-from core import add_Employee, delEmployee, searchEmp, update_employee
+from core import add_Employee, delEmployee, searchEmp, update_employee, getusers
 app = FastAPI()
 
 origins = ["http://localhost:3000"]
@@ -34,6 +34,13 @@ def dashboard(payload: dict = Depends(decode_token)):
     else:
         raise HTTPException(status_code=403, detail="Access denied")
 
+# fetch all users
+@app.get("/users")
+def get_all_users(payload: dict = Depends(decode_token)):  # Use dependency to inject payload
+    try:
+        return getusers(payload)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
 
 #Add Employee
 @app.post("/admin-dashboard/add", dependencies=[Depends(decode_token)])
