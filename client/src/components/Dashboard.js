@@ -4,6 +4,7 @@ import DashboardPage from "../pages/DashboardPage";
 
 const Dashboard = () => {
   const [message, setMessage] = useState("");
+  const [users,setUsers] = useState([]);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -21,6 +22,7 @@ const Dashboard = () => {
       headers: {
         Authorization: `Bearer ${token}`, 
     },
+
     })
       .then((response) => {
         if (response.ok) {
@@ -42,11 +44,38 @@ const Dashboard = () => {
         localStorage.removeItem("token");
         navigate("/");
       });
+      fetch("http://127.0.0.1:8000/users/",{
+        method:"GET",
+        headers:{
+          Authorization: `Bearer ${token}`,
+        },
+      }).then((response)=>{
+        if(response.ok){
+          return response.json()
+        }
+        else if(response.status===401){
+          throw new Error("Unauthorized: Token is invalid or expired")
+        }
+        else if(response.status===403){
+          throw new Error("Access forbidden")
+        }
+        else{
+          throw new Error("Please try again")
+        }
+      })
+      .then((data)=>{
+        setUsers(data);
+      })
+      .catch((err)=>{
+        setError(err.message)
+        localStorage.removeItem(token);
+        navigate("/")
+      });
   }, [navigate]);
 
   return (
     <div>
-      <DashboardPage message={message} errors={error}/>
+      <DashboardPage message={message} errors={error} users={users}/>
     </div>
   );
 };

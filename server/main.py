@@ -43,7 +43,7 @@ def get_all_users(payload: dict = Depends(decode_token)):  # Use dependency to i
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
 
 #Add Employee
-@app.post("/admin-dashboard/add", dependencies=[Depends(decode_token)])
+@app.post("/add", dependencies=[Depends(decode_token)])
 def addingEmployee(user: User, payload: dict = Depends(decode_token)):
     try:
         # Pass the payload (decoded token) to add_Employee
