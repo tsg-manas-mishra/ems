@@ -29,7 +29,7 @@ def update_employee(email: EmailStr, update_data: UpdateEmployee, token_payload:
     # Filter update_data
     update_data = {
         field: value
-        for field, value in update_data.dict(exclude_unset=True).items()
+        for field, value in update_data.model_dump(exclude_unset=True).items()
         if field in allowed_fields
     }
     if not update_data:
