@@ -8,8 +8,8 @@ const Dashboard = () => {
   const [message, setMessage] = useState("");
   const [users, setUsers] = useState([]);
   const [error, setError] = useState("");
-  const [showModal, setShowModal] = useState(false); // Modal visibility
-  const [isEdit, setIsEdit] = useState(false); // Editing mode
+  const [showModal, setShowModal] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [newEmployee, setNewEmployee] = useState({
     name: "",
@@ -38,6 +38,7 @@ const Dashboard = () => {
         setError(err.message);
         localStorage.removeItem("token");
         localStorage.removeItem("role");
+        localStorage.removeItem("email");
         navigate("/");
       });
 
@@ -47,6 +48,7 @@ const Dashboard = () => {
         setError(err.message);
         localStorage.removeItem("token");
         localStorage.removeItem("role");
+        localStorage.removeItem("email");
         navigate("/");
       });
   }, [navigate]);

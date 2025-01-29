@@ -15,6 +15,7 @@ const LoginForm = () => {
       const data = await login(email, password);
       localStorage.setItem("token", data.access_token);
       localStorage.setItem("role",data.role);
+      localStorage.setItem("email",data.email);
       navigate("/dashboard");
     } catch (err) {
       setError(err.message || "Login failed. Please try again.");
