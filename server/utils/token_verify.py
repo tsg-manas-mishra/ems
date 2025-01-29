@@ -27,7 +27,7 @@ def authUser(user: User):
         # Generate access token
         access_token = create_access_token(token_data)
 
-        return {"access_token": access_token, "token_type": "Bearer", "role":db_user.get("role")}
+        return {"access_token": access_token, "token_type": "Bearer", "role":db_user.get("role"), "name":db_user.get("name")}
 
     except PyMongoError as e:
         raise HTTPException(status_code=500, detail=f"Database error: {e}")
