@@ -1,5 +1,6 @@
 from fastapi import HTTPException
 from db import user_collection, update_collection
+from fastapi.responses import JSONResponse
 from pydantic import EmailStr
 from models import UpdateEmployee
 from datetime import datetime
@@ -9,22 +10,22 @@ def update_employee(email: EmailStr, update_data: UpdateEmployee, token_payload:
     token_email = token_payload.get("email")
 
     if not token_email:
-        raise HTTPException(status_code=401, detail="Invalid token: Email missing")
+        raise JSONResponse(status_code=401, content="Log in again")
 
     # Fetch the employee record
     employee = user_collection.find_one({"email": email})
     if not employee:
-        raise HTTPException(status_code=404, detail="Employee not found")
+        raise JSONResponse(status_code=404, content="Employee not found")
 
     # Determine allowed fields based on role
     if role == "Employee":
         if token_email != email:
-            raise HTTPException(status_code=403, detail="Access forbidden: Employees can only update their own record")
+            raise JSONResponse(status_code=403, content="Access forbidden")
         allowed_fields = {"contact", "address"}
     elif role == "Admin":
         allowed_fields = {"name", "designation", "department", "contact", "address"}
     else:
-        raise HTTPException(status_code=403, detail="Access forbidden: Invalid role")
+        raise JSONResponse(status_code=403, detail="Access forbidden")
 
     # Filter update_data
     update_data = {
@@ -33,19 +34,19 @@ def update_employee(email: EmailStr, update_data: UpdateEmployee, token_payload:
         if field in allowed_fields
     }
     if not update_data:
-        raise HTTPException(status_code=400, detail="No valid fields to update")
+        raise JSONResponse(status_code=400, content="No valid fields to update")
 
     # Validate and convert contact field
     if "contact" in update_data and isinstance(update_data["contact"], str):
         try:
             update_data["contact"] = int(update_data["contact"])
         except ValueError:
-            raise HTTPException(status_code=400, detail="Invalid contact value: must be a valid integer")
+            raise JSONResponse(status_code=400, content="Invalid contact value: must be a valid integer")
 
     # Update MongoDB document
     update_result = user_collection.update_one({"email": email}, {"$set": {**update_data,"updated":datetime.now()}})
     if update_result.matched_count == 0:
-        raise HTTPException(status_code=400, detail="Failed to update employee")
+        raise JSONResponse(status_code=400, content="Failed to update employee")
 
     # Fetch and sanitize the updated employee
     updated_employee = user_collection.find_one({"email": email})

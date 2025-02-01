@@ -1,25 +1,30 @@
 from fastapi import HTTPException, Query
 from db import user_collection
-from pydantic import EmailStr
+from fastapi.responses import JSONResponse
 from typing import Optional
-from bson import ObjectId
 
-def searchEmp(email: Optional[str] = Query(None), designation: Optional[str] = Query(None),department: Optional[str]=Query(None)):
+# key: column_name, value : column_value
+
+def searchEmp(name: Optional[str] = Query(None), designation: Optional[str] = Query(None), department: Optional[str] = Query(None)):
     try:
-        query={}
-        if email:
-            query["email"]=email
+        query = {}
+
+        if name:
+            query["name"] = {"$regex": name, "$options": "i"} 
         if designation:
-            query["designation"]=designation
+            query["designation"] = {"$regex": designation, "$options": "i"}
         if department:
-            query["department"]=department
-        employees=list(user_collection.find(query))
+            query["department"] = {"$regex": department, "$options": "i"}
+
+        employees = list(user_collection.find(query, {"password": 0}))
+
         if not employees:
-            return {"message": "No employees found for the given criteria."}
+            raise JSONResponse(status_code=404, content="No employees found.")
+
         for emp in employees:
             emp["_id"] = str(emp["_id"])
-        del emp["password"]
-        return {"employees":employees}
+
+        return {"employees": employees}
+
     except Exception as e:
-        raise HTTPException("")
-    
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
