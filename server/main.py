@@ -3,8 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from utils import authUser, decode_token
 from models import User, UpdateEmployee
 from typing import Optional
+from db import user_collection
 from pydantic import EmailStr
-from core import add_Employee, delEmployee, searchEmp, update_employee, getusers
+from core import add_Employee, delEmployee, searchEmp, update_employee, getusers, get_all_users_service
 app = FastAPI()
 
 origins = ["http://localhost:3000"]
@@ -36,11 +37,12 @@ def dashboard(payload: dict = Depends(decode_token)):
 
 # fetch all users
 @app.get("/users")
-def get_all_users(payload: dict = Depends(decode_token)):  # Use dependency to inject payload
-    try:
-        return getusers(payload)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+def get_all_users(
+    column: Optional[str] = Query(None), 
+    order: Optional[str] = Query("asc"),
+    payload: dict = Depends(decode_token)
+):
+    return get_all_users_service(column, order)
 
 #Add Employee
 @app.post("/add", dependencies=[Depends(decode_token)])

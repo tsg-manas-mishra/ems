@@ -4,3 +4,4 @@ from .searchEmployee import searchEmp
 from .editEmployee import update_employee
 from .allUsers import getusers
 from .isExists import checkIfExists
+from .sorting import get_all_users_service
