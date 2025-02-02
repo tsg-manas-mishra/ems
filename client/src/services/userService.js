@@ -1,34 +1,28 @@
 export const fetchDashboardData = async (token) => {
-    const response = await fetch("http://127.0.0.1:8000/dashboard/", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  
-    if (!response.ok) {
-      if (response.status === 401) throw new Error("Unauthorized: Token expired or invalid");
-      if (response.status === 403) throw new Error("Forbidden: Insufficient permissions");
-      throw new Error("An unknown error occurred");
+    if (!token) {
+        console.error("Token is missing. Please log in.");
+        return null;
     }
-  
-    return response.json();
-  };
-  
-  export const fetchUsers = async (token) => {
-    const response = await fetch("http://127.0.0.1:8000/users/", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  
-    if (!response.ok) {
-      if (response.status === 401) throw new Error("Unauthorized: Token expired or invalid");
-      if (response.status === 403) throw new Error("Forbidden: Insufficient permissions");
-      throw new Error("An unknown error occurred");
+
+    try {
+        const response = await fetch("http://127.0.0.1:8000/dashboard", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        if (!response.ok) {
+            if (response.status === 401) throw new Error("Unauthorized: Token expired or invalid");
+            if (response.status === 403) throw new Error("Forbidden: Insufficient permissions");
+            throw new Error("Failed to fetch dashboard data");
+        }
+
+        const dashboardData = await response.json();
+        return dashboardData;
+    } catch (error) {
+        console.error("Error fetching dashboard data:", error.message);
+        return null;
     }
-  
-    return response.json();
-  };
-  
+};
