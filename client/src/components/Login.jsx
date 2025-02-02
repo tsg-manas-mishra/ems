@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../services/authService";
 
@@ -7,7 +7,12 @@ const LoginForm = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-
+  useEffect(()=>{
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("email");
+    localStorage.removeItem("name");
+  },[])
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -16,6 +21,7 @@ const LoginForm = () => {
       localStorage.setItem("token", data.access_token);
       localStorage.setItem("role",data.role);
       localStorage.setItem("email",data.email);
+      localStorage.setItem("name",data.name);
       navigate("/dashboard");
     } catch (err) {
       setError(err.message || "Login failed. Please try again.");
