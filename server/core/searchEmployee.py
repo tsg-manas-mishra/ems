@@ -15,10 +15,8 @@ def searchEmp(name: Optional[str] = Query(None), designation: Optional[str] = Qu
             query["designation"] = {"$regex": designation, "$options": "i"}
         if department:
             query["department"] = {"$regex": department, "$options": "i"}
-
         employees = list(user_collection.find(query, {"password": 0}))
-
-        if not employees:
+        if employees is None:
             raise JSONResponse(status_code=404, content="No employees found.")
 
         for emp in employees:
