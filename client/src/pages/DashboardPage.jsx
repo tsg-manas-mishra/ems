@@ -17,7 +17,7 @@ const DashboardPage = ({ message, users, filteredUsers, success, handleDeleteEmp
     }
 
     setSortState({ column, order: newOrder });
-    handleSort(column, newOrder); // Send sorting request to backend
+    handleSort(column, newOrder);
   };
 
   return (
