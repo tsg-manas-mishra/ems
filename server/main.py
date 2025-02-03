@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import  JSONResponse
 from utils import authUser, decode_token
 from models import User, UpdateEmployee
 from typing import Optional
@@ -33,7 +34,7 @@ def dashboard(payload: dict = Depends(decode_token)):
     elif role == "Employee":
         return {"message": "Welcome, Employee!"}
     else:
-        raise HTTPException(status_code=403, detail="Access denied")
+        raise JSONResponse(status_code=403, content="Access denied")
 
 # fetch all users
 @app.get("/users")
