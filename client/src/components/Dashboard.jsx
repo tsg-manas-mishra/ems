@@ -160,7 +160,6 @@ const Dashboard = () => {
     try {
         if (!value.trim()) {
             setNotfound(false);
-            console.log("Search is empty, fetching all users...");
             await loadUsers();
             setFilteredUsers([]);
             setActive(false);
@@ -265,7 +264,7 @@ const Dashboard = () => {
     }
 
     // Phone Number Validation (10-digit numbers only)
-    const phonePattern = /^\d{10,}$/;
+    const phonePattern = /^\d{10}$/;
     if (!phonePattern.test(newEmployee.contact)) {
       setNumcheck("Please enter a valid 10-digit phone number.");
       return;
