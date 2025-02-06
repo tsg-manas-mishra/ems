@@ -3,16 +3,15 @@ from typing import Optional
 from db import user_collection, redis_client
 from utils import decode_token
 from datetime import datetime
+import json
 
 
 def get_all_users_service(column: Optional[str] = None, order: Optional[str] = "asc", payload: dict = Depends(decode_token)):
     """
-    Fetch all users with optional sorting and Redis caching using email as Hash key.
+    Fetch all users with optional sorting and Redis caching using "all_users" as the main key.
     """
     try:
-        allowed_columns = [
-            "name", "email", "role", "department", "designation", "address", "contact"
-        ]
+        allowed_columns = ["name", "email", "role", "department", "designation", "address", "contact"]
 
         if column and column not in allowed_columns:
             raise HTTPException(
@@ -20,35 +19,34 @@ def get_all_users_service(column: Optional[str] = None, order: Optional[str] = "
                 detail=f"Invalid column '{column}'. Allowed: {allowed_columns}",
             )
 
-        # Fetch all user hashes from Redis
-        user_keys = redis_client.keys("user:*")
+        # Fetch all users from the Redis hash "all_users"
+        users_dict = redis_client.hgetall("all_users")
         users = []
 
-        if user_keys:
+        if users_dict:
             print("Fetching users from Redis cache")
-            for key in user_keys:
-                user_data = redis_client.hgetall(key)
-                if user_data:
-                    users.append(user_data)
+            for email, user_data in users_dict.items():
+                users.append(json.loads(user_data))  # Convert JSON string back to dictionary
         
-        # If no users in Redis, fetch from MongoDB
+        # If Redis is empty, fetch from MongoDB
         if not users:
             print("Fetching from database as data is not in Redis")
             query = {}
             users = list(user_collection.find(query, {"password": 0}))
 
+            # Convert MongoDB data to JSON serializable format
             for user in users:
                 user["_id"] = str(user["_id"])  # Convert ObjectId to string
                 user = serialize_mongo_data(user)
 
-                # Store each user in Redis Hash (`HSET user:{email}`)
-                redis_key = f"user:{user['email']}"
-                redis_client.hset(redis_key, mapping=user)
-                redis_client.expire(redis_key, 600)  # Set expiry (10 min)
+                # Store user data in Redis Hash (`HSET all_users {email} {user_data}`)
+                redis_client.hset("all_users", user["email"], json.dumps(user))
+
+            redis_client.expire("all_users", 600)  # Set expiry (10 min)
 
         # Apply sorting if required
         if column:
-            users.sort(key=lambda x: x.get(column), reverse=(order == "desc"))
+            users.sort(key=lambda x: x.get(column, ""), reverse=(order == "desc"))
 
         return users
 

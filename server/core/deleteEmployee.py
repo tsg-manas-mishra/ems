@@ -17,23 +17,23 @@ def delEmployee(EM: EmailStr, payload: dict = Depends(decode_token)):
     if role != "Admin":
         raise JSONResponse(status_code=403, content={"detail": "Forbidden"})
 
-    # Check if the employee exists
+    #Check if the employee exists in MongoDB
     existing_employee = user_collection.find_one({"email": EM})
     if not existing_employee:
         raise JSONResponse(status_code=404, content={"detail": "Email ID does not exist"})  
     
     try:
-        # **Delete the employee from MongoDB**
+        # Delete the employee from MongoDB
         deleted_employee = user_collection.find_one_and_delete({"email": EM})
         if not deleted_employee:
             raise HTTPException(status_code=500, detail="Failed to delete employee")
 
-        # **Remove Employee from Redis**
+        # Remove Employee from Redis
         redis_key = f"user:{EM}"
-        redis_client.delete(redis_key)  # Remove the user's hash key
+        redis_client.delete(redis_key)  # Remove the user's Redis hash key
 
-        # **Invalidate "all_users" Cache**
-        redis_client.delete("all_users")  # Ensures fresh data is loaded on next request
+        # **Remove Employee from "all_users" Redis Hash**
+        redis_client.hdel("all_users", EM) 
 
         return {"message": "Employee Deleted Successfully"}
     

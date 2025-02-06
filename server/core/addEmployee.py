@@ -58,28 +58,20 @@ def add_Employee(user: User, payload: dict = Depends(decode_token)):
 
         redis_client.expire(redis_key, 600)
 
-        # **2️⃣ Update "all_users" Cache**
-        cached_users = redis_client.get("all_users")
-
-        if cached_users:
-            users = json.loads(cached_users)
-        else:
-            users = []
-
-        # Ensure email is included in cache
-        users.append({
+        # **2️⃣ Update "all_users" Redis Hash Instead of JSON**
+        redis_client.hset("all_users", entry["email"], json.dumps({
             "_id": entry["_id"],
             "name": entry["name"],
-            "email": entry["email"],  # Ensure email is stored
+            "email": entry["email"],
             "role": entry["role"],
             "department": entry["department"],
             "designation": entry["designation"],
             "address": entry["address"],
             "contact": entry["contact"],
             "updated": entry["updated"]
-        })
+        }))
 
-        redis_client.setex("all_users", 600, json.dumps(users))  # Update Redis cache with new list
+        redis_client.expire("all_users", 600)  # Set expiry for 10 minutes
 
         return {"message": "Employee added successfully"}
     
