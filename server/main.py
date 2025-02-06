@@ -4,9 +4,8 @@ from fastapi.responses import  JSONResponse
 from utils import authUser, decode_token
 from models import User, UpdateEmployee
 from typing import Optional
-from db import user_collection
 from pydantic import EmailStr
-from core import add_Employee, delEmployee, searchEmp, update_employee, getusers, get_all_users_service
+from core import add_Employee, delEmployee, searchEmp, update_employee, get_all_users_service
 app = FastAPI()
 
 origins = ["http://localhost:3000"]
@@ -37,13 +36,13 @@ def dashboard(payload: dict = Depends(decode_token)):
         raise JSONResponse(status_code=403, content="Access denied")
 
 # fetch all users
-@app.get("/users")
+@app.get("/users/")
 def get_all_users(
     column: Optional[str] = Query(None), 
     order: Optional[str] = Query("asc"),
     payload: dict = Depends(decode_token)
-):
-    return get_all_users_service(column, order)
+):  
+    return get_all_users_service(column, order,payload)
 
 #Add Employee
 @app.post("/add", dependencies=[Depends(decode_token)])
@@ -64,7 +63,7 @@ def deletingemp(email:EmailStr,payload: dict=Depends(decode_token)):
         raise HTTPException(status_code=500, detail=f"Internal Server Error {e}")
 
 #Search Employee
-@app.get("/search-employee",dependencies=[Depends(decode_token)])
+@app.get("/search-employee/",dependencies=[Depends(decode_token)])
 def searchingemp(name: Optional[str] = Query(None), designation: Optional[str] = Query(None),department: Optional[str]=Query(None)):
     try:
         return searchEmp(name,designation,department)
