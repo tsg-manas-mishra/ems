@@ -8,3 +8,4 @@ pydantic
 virtualenv
 jwt
 email-validator
+aioredis
