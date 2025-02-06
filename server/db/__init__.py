@@ -1,1 +1,1 @@
-from .database_connection import user_collection, update_collection
+from .database_connection import user_collection, update_collection, redis_client
