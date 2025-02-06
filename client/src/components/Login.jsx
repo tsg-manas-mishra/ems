@@ -12,7 +12,7 @@ const LoginForm = () => {
     localStorage.removeItem("role");
     localStorage.removeItem("email");
     localStorage.removeItem("name");
-  },[])
+  },[navigate])
   const handleSubmit = async (e) => {
     e.preventDefault();
 
