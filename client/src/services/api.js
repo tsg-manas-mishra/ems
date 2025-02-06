@@ -1,4 +1,5 @@
-const API_URL = "http://127.0.0.1:8000";
+const BASEURL=process.env.REACT_APP_API_URL;
+
 
 export const searchUsers = async (field, value) => {
     const token = localStorage.getItem("token");
@@ -8,7 +9,7 @@ export const searchUsers = async (field, value) => {
     }
 
     try {
-        const response = await fetch(`${API_URL}/search-employee/?${field}=${(value)}`, {
+        const response = await fetch(`${BASEURL}/search-employee/?${field}=${(value)}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

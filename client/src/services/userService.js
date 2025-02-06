@@ -1,3 +1,4 @@
+const BASEURL=process.env.REACT_APP_API_URL;
 export const fetchDashboardData = async (token) => {
     if (!token) {
         console.error("Token is missing. Please log in.");
@@ -5,7 +6,7 @@ export const fetchDashboardData = async (token) => {
     }
 
     try {
-        const response = await fetch("http://127.0.0.1:8000/dashboard", {
+        const response = await fetch(`${BASEURL}/dashboard/`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
