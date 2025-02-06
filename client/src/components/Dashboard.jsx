@@ -65,6 +65,7 @@ const Dashboard = () => {
   });
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
+  const BASEURL=process.env.REACT_APP_API_URL;
   const role = localStorage.getItem("role"); 
 
   const loadUsers = async () => {
@@ -98,7 +99,7 @@ const Dashboard = () => {
 }, [navigate, isDataUpdated]);
 
 
-
+  //adding data on form
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
@@ -124,6 +125,8 @@ const Dashboard = () => {
       setErrors(""); // Remove the general "All fields are required" error when user starts typing
     }
   };
+
+  //for sorting
   const handleSort = async (column, order) => {
     if (order === "default") {
       loadUsers(); // Reset to original data
@@ -137,7 +140,7 @@ const Dashboard = () => {
     }
   
     try {
-      const response = await fetch(`http://127.0.0.1:8000/users?column=${column}&order=${order}`, {
+      const response = await fetch(`${BASEURL}/users?column=${column}&order=${order}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -194,7 +197,7 @@ const Dashboard = () => {
     );
     if (!confirmDelete) return;
 
-    fetch(`http://127.0.0.1:8000/delete-employee/${id}`, {
+    fetch(`${BASEURL}/delete-employee/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -208,7 +211,7 @@ const Dashboard = () => {
         return response.json();
       })
       .then(() => {
-        return fetch("http://127.0.0.1:8000/users", {
+        return fetch(`${BASEURL}/users`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -225,9 +228,11 @@ const Dashboard = () => {
       .then((updatedUsers) => {
         setUsers(updatedUsers);
         setSuccess("Employee Deleted Successfully");
+        setTimeout(()=>setSuccess(""),3000);
       })
       .catch((err) => {
         setErrors("Try again");
+        throw new Error("Try again")
       });
   };
 
@@ -285,8 +290,8 @@ const Dashboard = () => {
     };
 
     const endpoint = isEdit
-      ? `http://127.0.0.1:8000/edit-employee/${selectedEmployee.email}`
-      : "http://127.0.0.1:8000/add";
+      ? `${BASEURL}/edit-employee/${selectedEmployee.email}`
+      : `${BASEURL}/add`;
 
     try {
       const response = await fetch(endpoint, {
@@ -316,6 +321,7 @@ const Dashboard = () => {
           : "Employee Added Successfully"
       );
       handleCloseModal();
+      setTimeout(()=>setSuccess(""),3000);
     } catch (err) {
       setErrors("An unexpected error occurred. Please try again.");
     }
