@@ -54,7 +54,7 @@ def addingEmployee(user: User, payload: dict = Depends(decode_token)):
         raise HTTPException(status_code=500, detail=f"Server error {e}")
 
 
-#Delete Employee
+#Delete__Employee
 @app.delete("/delete-employee/{email}")
 def deletingemp(email:EmailStr,payload: dict=Depends(decode_token)):
     try:
