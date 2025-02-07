@@ -44,7 +44,7 @@ def get_all_users(
 ):  
     return get_all_users_service(column, order,payload)
 
-#Add Employee
+#Add_Employee
 @app.post("/add")
 def addingEmployee(user: User, payload: dict = Depends(decode_token)):
     try:
