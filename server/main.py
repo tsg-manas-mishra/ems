@@ -45,7 +45,7 @@ def get_all_users(
     return get_all_users_service(column, order,payload)
 
 #Add Employee
-@app.post("/add", dependencies=[Depends(decode_token)])
+@app.post("/add")
 def addingEmployee(user: User, payload: dict = Depends(decode_token)):
     try:
         # Pass the payload (decoded token) to add_Employee
@@ -55,7 +55,7 @@ def addingEmployee(user: User, payload: dict = Depends(decode_token)):
 
 
 #Delete Employee
-@app.delete("/delete-employee/{email}",dependencies=[Depends(decode_token)])
+@app.delete("/delete-employee/{email}")
 def deletingemp(email:EmailStr,payload: dict=Depends(decode_token)):
     try:
         return delEmployee(email,payload)
