@@ -62,7 +62,7 @@ def deletingemp(email:EmailStr,payload: dict=Depends(decode_token)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal Server Error {e}")
 
-#Search Employee
+#Search_Employee
 @app.get("/search-employee/",dependencies=[Depends(decode_token)])
 def searchingemp(name: Optional[str] = Query(None), designation: Optional[str] = Query(None),department: Optional[str]=Query(None)):
     try:
