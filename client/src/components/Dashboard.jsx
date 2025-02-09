@@ -5,7 +5,7 @@ import { fetchDashboardData } from "../services/userService";
 import DashboardPage from "../pages/DashboardPage";
 import SearchBar from "./Searchbar";
 import { searchUsers } from "../services/api";
-
+const BASEURL=process.env.REACT_APP_API_URL;
 const fetchUsers = async () => { 
   const token = localStorage.getItem("token");
   if (!token) {
@@ -16,7 +16,7 @@ const fetchUsers = async () => {
   }
 
   try {
-      const response = await fetch("http://127.0.0.1:8000/users/", {
+      const response = await fetch(`${BASEURL}/users/`, {
           method: "GET",
           headers: {
               Authorization: `Bearer ${token}`,
@@ -65,7 +65,6 @@ const Dashboard = () => {
   });
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
-  const BASEURL=process.env.REACT_APP_API_URL;
   const role = localStorage.getItem("role"); 
 
   const loadUsers = async () => {
