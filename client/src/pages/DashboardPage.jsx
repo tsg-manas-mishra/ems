@@ -29,7 +29,6 @@ const DashboardPage = ({ message, users, filteredUsers, success, handleDeleteEmp
                           onClick={() => handleEditEmployee(email)}> Edit </button>}
         <div className="overflow-x-auto bg-white shadow-md rounded-lg p-6">
           <h2 className="text-xl font-semibold mb-4">Users</h2>
-          {notfound ? <p className="text-2xl mb-4">No Employees found</p> :
           <table className="min-w-full table-auto border-collapse border border-gray-300">
             <thead className="bg-gray-200">
               <tr>
@@ -47,7 +46,8 @@ const DashboardPage = ({ message, users, filteredUsers, success, handleDeleteEmp
             </thead>
 
             <tbody>
-              {displayedUsers.length > 0 ? (
+              {(notfound)?(<tr><td colSpan="8" className="text-center py-4 text-gray-500">No users found</td></tr>):
+              displayedUsers.length > 0 ? (
                 displayedUsers.map((user, index) => (
                   <tr key={user._id || user.id || index} className="even:bg-gray-50 odd:bg-white">
                     <td className="border px-4 py-2">{user.name}</td>
@@ -75,7 +75,7 @@ const DashboardPage = ({ message, users, filteredUsers, success, handleDeleteEmp
                 </tr>
               )}
             </tbody>
-          </table>}
+          </table>
         </div>
       </div>
     </div>

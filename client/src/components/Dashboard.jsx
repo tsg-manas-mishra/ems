@@ -139,7 +139,7 @@ const Dashboard = () => {
     }
   
     try {
-      const response = await fetch(`${BASEURL}/users?column=${column}&order=${order}`, {
+      const response = await fetch(`${BASEURL}/users/?column=${column}&order=${order}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -210,7 +210,7 @@ const Dashboard = () => {
         return response.json();
       })
       .then(() => {
-        return fetch(`${BASEURL}/users`, {
+        return fetch(`${BASEURL}/users/`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -307,6 +307,9 @@ const Dashboard = () => {
           setErrors("Please fill out all the fields correctly.");
           return;
         }
+        else if(response.staus===409){
+          setErrors("Employee with this email already exists")
+        }
         setErrors("Failed to save employee. Please log in and try again");
         return;
       }
@@ -355,6 +358,8 @@ const Dashboard = () => {
       contact: "",
     });
     setErrors("");
+    setEmailcheck("");
+    setNumcheck("");
     setIsDataUpdated(false);
   };
 
@@ -484,7 +489,7 @@ const Dashboard = () => {
               <div className="flex justify-end space-x-4">
                 <button
                   className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
-                  onClick={() => setShowModal(false)}
+                  onClick={handleCloseModal}
                 >
                   Cancel
                 </button>
